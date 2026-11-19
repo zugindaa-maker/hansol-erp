@@ -534,18 +534,33 @@ end $$;
 create or replace function public.tx_undo(p_log_id bigint)
 returns public.tx_logs
 language plpgsql security definer set search_path = public as $$
-declare v_old public.tx_logs;
+declare
+  v_old  public.tx_logs;
+  v_have numeric;
 begin
   perform public.require_login();
   select * into v_old from tx_logs where id = p_log_id for update;
   if v_old.id is null then raise exception '이력을 찾을 수 없습니다.'; end if;
 
+  -- 되돌린 뒤 재고가 마이너스가 되면 취소하지 않는다 (이미 출고·해동된 물량)
   if v_old.tx_type = 'in' then
+    v_have := public.lot_qty(v_old.lot_id, coalesce(v_old.warehouse, 'F'));
+    if v_have + 0.004 < v_old.qty then
+      raise exception '이미 출고·해동된 물량이라 취소할 수 없습니다. (현재 % kg)', round(v_have, 2);
+    end if;
     perform public.lot_add(v_old.lot_id, coalesce(v_old.warehouse, 'F'), -v_old.qty);
   elsif v_old.tx_type = 'thaw' then
+    v_have := public.lot_qty(v_old.lot_id, 'C');
+    if v_have + 0.004 < v_old.qty then
+      raise exception '이미 출고된 물량이라 해동을 취소할 수 없습니다. (냉장고 현재 % kg)', round(v_have, 2);
+    end if;
     perform public.lot_add(v_old.lot_id, 'F', v_old.qty);
     perform public.lot_add(v_old.lot_id, 'C', -v_old.qty);
   elsif v_old.tx_type = 're' then
+    v_have := public.lot_qty(v_old.lot_id, 'F');
+    if v_have + 0.004 < v_old.qty then
+      raise exception '이미 출고된 물량이라 재냉동을 취소할 수 없습니다. (냉동고 현재 % kg)', round(v_have, 2);
+    end if;
     perform public.lot_add(v_old.lot_id, 'C', v_old.qty);
     perform public.lot_add(v_old.lot_id, 'F', -v_old.qty);
   else
