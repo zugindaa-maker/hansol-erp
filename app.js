@@ -12,8 +12,8 @@
 
 /* ============================== CONFIG ============================== */
 var CONFIG = {
-  SUPABASE_URL: 'https://gzufnyglmvgzqltepock.supabase.co',
-  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imd6dWZueWdsbXZnenFsdGVwb2NrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQ4NDg3NDAsImV4cCI6MjExMDQyNDc0MH0.xFxZA9BjTCLJMmhMUbm93CrSqfqtcAz_GCrkf4t4vCc',
+  SUPABASE_URL: 'https://wwirbwbppwvvhdllreyu.supabase.co',
+  SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Ind3aXJid2JwcHd2dmhkbGxyZXl1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTUwNjAyNTIsImV4cCI6MjExMDYzNjI1Mn0.LQXPYRnAUdLetlsKwrUxpjk58_Y1ea5UluvVVloMqpU',
   /* 실시간(웹소켓)이 막히면 이 주기로 다시 불러옵니다 */
   POLL_MS: 60000
 };
