@@ -1662,39 +1662,36 @@ table.vsheet-table.iosheet td:first-child select{font-weight:750}
 @media(max-width:768px){#ioSheetModal .vhead{grid-template-columns:1fr 1fr}}
 
 /* ============================================================================
-   v13 · 폰 화면(≤820px) 개선
+   v13 · 폰 화면(≤768px) 개선
    ----------------------------------------------------------------------------
-   목적: 390px 폰에서 상단 머리·메뉴·요약카드가 화면을 다 먹어 표(재고·입출고
-   내역)가 몇 번을 스크롤해야 나오던 문제를 줄입니다. PC 화면 규칙은 건드리지
-   않고 이 블록(미디어 쿼리 안)에서만 덮어씁니다.
+   목적: 폰(390px 안팎)에서 상단 머리·요약카드·툴바·기간 바가 화면을 다 먹어
+   표(재고·입출고 내역)가 몇 번을 스크롤해야 나오던 문제를 줄입니다.
+   PC 화면 규칙은 건드리지 않고, 이 블록처럼 @media 안에서만 덮어씁니다.
    ============================================================================ */
 @media (max-width:768px){
-  /* 1) 상단 머리 — 한 줄로 낮게 */
+  /* 1) 상단 머리 — 한 줄로 낮게 (앱 이름은 말줄임, 상태 글씨는 숨김) */
   .top{padding:6px 10px;gap:6px;flex-wrap:nowrap;align-items:center}
-  .brand{gap:6px;min-width:0;flex:1 1 auto}
+  .brand{flex:1 1 auto;min-width:0;gap:6px}
+  .brand>div{min-width:0}
   .brand .logo{font-size:19px;line-height:1}
-  .brand h1{font-size:14px;letter-spacing:-.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .brand h1{display:block;font-size:14px;letter-spacing:-.3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .brand p{display:none}
-  .top-actions{gap:5px;flex:0 0 auto}
+  .top-actions{gap:5px;flex:0 0 auto;min-width:0}
   .top-actions .btn{font-size:12px;padding:6px 9px;min-height:32px;border-radius:9px}
   .top-actions .sync{display:none}
   .who span{display:none}
   .who b{font-size:12px}
-  .brand{min-width:0}
-  .brand>div{min-width:0}
-  .brand h1{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  /* 새로고침은 아이콘만 (누르면 그대로 동작) */
+  /* 새로고침 버튼은 아이콘만 (누르면 그대로 동작) */
   .btn.btn-hrefresh{width:34px;min-width:34px;padding:0;font-size:0;gap:0;justify-content:center}
   .btn.btn-hrefresh .rf{font-size:16px}
-  .top-actions{min-width:0}
 
-  /* 3) 화면 제목 — 설명 문단은 접고 한 줄만 */
+  /* 2) 화면 제목 — 설명 문단은 접고 한 줄만 */
   .v8pagehead{margin:8px 2px 6px;align-items:center}
   .v8pagehead h2{font-size:16px;letter-spacing:-.3px}
   .v8pagehead p{display:none}
   .v8crumb{font-size:10.5px;padding:3px 8px}
 
-  /* 4) 요약 카드(KPI) — 두 칸씩, 카드 높이를 절반 가까이 */
+  /* 3) 요약 카드(KPI) — 두 칸씩, 카드 높이를 절반 가까이 */
   .kpis{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:6px!important;margin-top:6px!important}
   .kpis.acc{grid-template-columns:repeat(2,minmax(0,1fr))!important}
   .kpi{padding:7px 9px 7px 11px!important;border-radius:10px}
@@ -1705,7 +1702,7 @@ table.vsheet-table.iosheet td:first-child select{font-weight:750}
   .kpi-unit{font-size:10.5px}
   .kpi-sub{display:none}
 
-  /* 5) 탭·툴바·기간 바 — 손가락 크기는 지키고 높이는 낮게 */
+  /* 4) 탭·툴바·기간 바 — 손가락 크기는 지키고 높이는 낮게, 넘치면 옆으로 밀기 */
   .v8subtabs{padding:8px 10px 0;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
   .v8subtabs::-webkit-scrollbar{display:none}
   .v8mini,.v8st{flex:0 0 auto;white-space:nowrap}
@@ -1719,7 +1716,7 @@ table.vsheet-table.iosheet td:first-child select{font-weight:750}
   .rng input{padding:7px 6px;font-size:13px;min-height:36px}
   .note{font-size:11.5px;line-height:1.45}
 
-  /* 6) 표 — 좌우로 밀어 보기, 머리글·작업 열 고정 유지 */
+  /* 5) 표 — 좌우로 밀어 보기, 머리글·작업 열 고정은 그대로 */
   .table-wrap{max-height:62vh;overscroll-behavior:contain}
   .table-wrap table{font-size:12.5px}
   thead th{font-size:11px;padding:7px 7px}
@@ -1727,7 +1724,7 @@ table.vsheet-table.iosheet td:first-child select{font-weight:750}
   td.actcol,thead th.actcol{box-shadow:-4px 0 6px -4px rgba(16,24,40,.25)}
   .actmenu,.acts .act,.acts .cancel{padding:6px 8px;font-size:12px;min-height:30px}
 
-  /* 7) 입력 팝업(모달) — 폰 폭에 꽉 차고, 내용은 팝업 안에서 스크롤 */
+  /* 6) 입력 팝업(모달) — 폰 폭을 꽉 채우고, 내용은 팝업 안에서 스크롤 */
   .modal{padding:0;align-items:flex-end}
   .modal-card{
     width:100%;max-width:100%;max-height:92vh;max-height:92dvh;overflow:auto;
@@ -1738,30 +1735,33 @@ table.vsheet-table.iosheet td:first-child select{font-weight:750}
   .modal-card .grid2,.modal-card .grid3{grid-template-columns:1fr!important}
   input,select,textarea{font-size:16px}   /* iOS에서 칸을 누를 때 화면이 확대되지 않게 */
 
-  /* 폭이 아주 좁은 폰: 탭 이름표는 줄이고 칩만, 앱 이름은 로고로 대신 */
+  /* 7) 폭이 아주 좁은 폰 — 탭 이름표는 접고, 카드형 메뉴 버전은 앱 이름·이름을 메뉴 시트로 */
   @media (max-width:430px){
     .v8stlabel{display:none}
     .v8brand b{font-size:13px}
     body.v13-msheet .brand h1{display:none}
-    body.v13-msheet .who{display:none}   /* 이름은 [메뉴] 시트 머리에 표시 */
+    body.v13-msheet .who{display:none}
   }
-  /* 좁은 폰: 날짜칸은 [📅 기간선택] 달력으로 대신 (줄 하나 절약) */
+
+  /* 8) 좁은 폰 — 날짜칸은 [📅 기간선택] 달력으로, 안내문은 접어 표를 첫 화면으로 */
   @media (max-width:560px){
     .rangebar .rng{display:none}
-    /* 안내문은 접어서 표가 첫 화면에 오게 (같은 안내는 [도움말]에 있음) */
     #fgNoteBar,#histNote,#chgNote{display:none}
     .rangebar .range-sum{flex:1 1 100%;text-align:right;font-size:10.5px}
   }
 
-  /* 8) 로그인 화면 */
+  /* 9) 로그인 화면 */
   .login-view{padding:16px 12px}
   .login-card{padding:18px 16px;border-radius:16px}
   .login-brand h1{font-size:18px}
   .login-brand p{font-size:12px}
 }
 
-/* ---------- v13: 완제품 입출고 내역 — 전체 / 입고만 / 출고만 ---------- */
-/* 예전 <select id="fgLogFilter">는 값만 유지하고 화면에는 칩으로 보여 줍니다. */
+/* ============================================================================
+   v13 · 완제품 입출고 내역 [전체 / 입고만 / 출고만] 칩
+   기존 <select id="fgLogFilter"> 는 값의 주인으로만 남기고(화면에서는 숨김),
+   칩을 누르면 그 select 에 change 이벤트를 보내 앱의 기존 필터가 돌아갑니다.
+   ============================================================================ */
 #fgLogFilter{display:none!important}
 .dirchips{display:flex;align-items:center;gap:6px;padding:8px 12px;border-bottom:1px solid var(--line2);background:#fbfdff}
 .dirchips.hidden{display:none!important}
