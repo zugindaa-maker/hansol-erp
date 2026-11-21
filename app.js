@@ -10986,3 +10986,123 @@ var LIVE = (function () {
   else boot();
 })();
 /* ============================== UI:END ============================== */
+
+/* ============================================================================
+   v13 · 폰 화면(≤820px) 개선 — 부속 스크립트
+   ----------------------------------------------------------------------------
+   완제품 입출고 내역의 구분 필터를 [전체 / 입고만 / 출고만] 칩으로 보여 줍니다.
+   기존 <select id="fgLogFilter"> 가 값의 주인이고, 칩은 그 값을 바꿔 주기만
+   하므로 앱의 기존 필터 로직(구분 변경 → 표 다시 그리기)을 그대로 씁니다.
+   ============================================================================ */
+(function () {
+  'use strict';
+  function el(id) { return document.getElementById(id); }
+
+  function syncChips() {
+    var chips = el('fgDirChips'), sel = el('fgLogFilter');
+    if (!chips || !sel) return;
+    /* 앱은 입출고 내역 탭에서만 select 의 hidden 을 뺀다 → 칩도 같은 시점에 보인다 */
+    var open = !sel.classList.contains('hidden');
+    chips.classList.toggle('hidden', !open);
+    var v = sel.value || 'all';
+    var btns = chips.querySelectorAll('.dirchip');
+    for (var i = 0; i < btns.length; i++) {
+      var on = (btns[i].getAttribute('data-dir') || 'all') === v;
+      btns[i].classList.toggle('active', on);
+      btns[i].setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+  }
+
+  function choose(dir) {
+    var sel = el('fgLogFilter');
+    if (!sel) return;
+    if (sel.value !== dir) {
+      sel.value = dir;
+      sel.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+    syncChips();
+  }
+
+  function init() {
+    var chips = el('fgDirChips'), sel = el('fgLogFilter');
+    if (!chips || !sel) return;
+    chips.addEventListener('click', function (e) {
+      var b = e.target && e.target.closest ? e.target.closest('.dirchip') : null;
+      if (!b) return;
+      choose(b.getAttribute('data-dir') || 'all');
+    });
+    if (window.MutationObserver) {
+      new MutationObserver(syncChips).observe(sel, { attributes: true, attributeFilter: ['class'] });
+    }
+    syncChips();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+
+/* ============================================================================
+   v13 · 폰 메뉴 시트 — 5장 카드형 메뉴(.nav-card)가 있는 버전에서만 켜집니다.
+   하단 [메뉴] 버튼을 누르면 메뉴가 아래에서 올라오고, 항목을 고르면 닫힙니다.
+   ============================================================================ */
+(function () {
+  'use strict';
+  function ready(fn) {
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fn);
+    else fn();
+  }
+  ready(function () {
+    var side = document.getElementById('v8Side');
+    /* 사본 v12처럼 .nav-card 가 없는 메뉴는 손대지 않습니다 */
+    if (!side || !side.querySelector('.nav-card')) return;
+
+    document.body.classList.add('v13-msheet');
+
+    var back = document.createElement('div');
+    back.className = 'v13-msheet-back';
+    back.setAttribute('aria-hidden', 'true');
+    back.addEventListener('click', close);
+    document.body.appendChild(back);
+
+    var head = document.createElement('div');
+    head.className = 'v13-msheet-head';
+    var ttl = document.createElement('b');
+    ttl.textContent = '메뉴';
+    /* 로그인한 작업자 이름 (좁은 폰에서는 상단에서 숨김) */
+    var whoEl = document.querySelector('#whoami b');
+    if (whoEl && whoEl.textContent) {
+      var who = document.createElement('span');
+      who.className = 'v13-msheet-who';
+      who.textContent = whoEl.textContent;
+      ttl.appendChild(who);
+    }
+    var x = document.createElement('button');
+    x.type = 'button'; x.className = 'v13-msheet-x'; x.setAttribute('aria-label', '메뉴 닫기');
+    x.textContent = '✕';
+    x.addEventListener('click', close);
+    head.appendChild(ttl); head.appendChild(x);
+    side.insertBefore(head, side.firstChild);
+
+    function open() {
+      document.body.classList.add('menu-open');
+      side.scrollTop = 0;
+    }
+    function close() { document.body.classList.remove('menu-open'); }
+
+    /* 하단 바 [메뉴] = 시트 열기 (원래는 왼쪽 메뉴로 스크롤) */
+    document.addEventListener('click', function (e) {
+      var t = e.target;
+      if (!t || !t.closest) return;
+      if (t.closest('#qbList')) {
+        e.preventDefault();
+        e.stopPropagation();
+        open();
+        return;
+      }
+      if (t.closest('#v8Side .nitem,#v8Side [data-nav],#v8Side [data-io],#v8Side [data-trade],#v8Side [data-prod],#v8Side [data-acc]')) {
+        close();
+      }
+    }, true);
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+  });
+})();

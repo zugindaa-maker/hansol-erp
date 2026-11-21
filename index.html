@@ -14,7 +14,7 @@
 <meta name="apple-mobile-web-app-title" content="미르스타푸드 ERP">
 <meta name="application-name" content="미르스타푸드 ERP">
 <meta name="format-detection" content="telephone=no">
-<link rel="stylesheet" href="style.css?v=20261118_19">
+<link rel="stylesheet" href="style.css?v=20261121_1">
 </head>
 <body>
 
@@ -530,6 +530,14 @@
             <button type="button" role="menuitem" id="btnFgPriceUpload" data-xl="fgPriceUpload">⬆ 단가표 엑셀 올리기</button>
           </div>
         </div>
+      </div>
+
+      <!-- v13: 입출고 내역 구분 필터 (전체 / 입고만 / 출고만) -->
+      <div class="dirchips hidden" id="fgDirChips" role="group" aria-label="입출고 구분 필터">
+        <button class="dirchip active" type="button" data-dir="all" aria-pressed="true">전체</button>
+        <button class="dirchip" type="button" data-dir="IN" aria-pressed="false"><span class="din">입고만</span></button>
+        <button class="dirchip" type="button" data-dir="OUT" aria-pressed="false"><span class="dout">출고만</span></button>
+        <span class="dchint">입고·출고를 나눠 보기</span>
       </div>
 
       <div class="rangebar" id="fgRangeBar">
@@ -1504,6 +1512,6 @@
 </div>
 
 <script src="partners_data.js?v=20261118_19"></script>
-<script src="app.js?v=20261119_1"></script>
+<script src="app.js?v=20261121_1"></script>
 </body>
 </html>
